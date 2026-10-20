@@ -259,7 +259,7 @@ function strip(s,q){const term=encodeURIComponent(s.title+" "+s.artist);return `
   <div class="code${s.mb?" mb":""}">${s.code}</div>
   <div class="sb"><div class="title">${hl(s.title,q)}</div><div class="band"></div>
   <div class="foot"><span>${s.year||"?"} · ${hl(s.name,q)}${gTag(s.g)}${s.w==="l"?'<span class="tag l">Lyrics</span>':""}${s.mb?'<span class="tag mbt">MusicBrainz</span>':""}</span>
-  <span class="links"><a href="https://genius.com/search?q=${term}" target="_blank" rel="noopener">Lyrics</a><a href="https://www.youtube.com/results?search_query=${term}" target="_blank" rel="noopener">Listen</a></span></div></div></article>`}
+  <span class="links"><a href="https://www.google.com/search?q=${term}%20lyrics" target="_blank" rel="noopener">Lyrics</a><a href="https://www.youtube.com/results?search_query=${term}" target="_blank" rel="noopener">Listen</a></span></div></div></article>`}
 
 function moreBox(q){
   if(!q||q.length<2)return "";
