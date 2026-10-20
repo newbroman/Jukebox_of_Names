@@ -59,6 +59,7 @@ main{padding:10px max(14px,env(safe-area-inset-right,0px)) 0 max(14px,env(safe-a
 mark{background:var(--hi);color:inherit}
 .more{background:var(--panel);border:1px dashed var(--line);border-radius:8px;padding:12px;display:grid;gap:8px;font-size:13px;color:var(--muted)}
 .more button{font:700 14px var(--body);padding:11px;border-radius:8px;border:0;background:var(--band2);color:#fff;cursor:pointer}
+.gbtn{display:block;text-align:center;font:700 14px var(--body);padding:11px;border-radius:8px;border:1px solid var(--band2);color:var(--band2);text-decoration:none}
 .more button:disabled{opacity:.6}
 .empty{padding:20px 8px;text-align:center;color:var(--muted)}
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--panel);border-top:1px solid var(--line);
@@ -300,6 +301,7 @@ function strip(s,q){const term=encodeURIComponent(s.title+" "+s.artist);return `
 function moreBox(q){
   if(!q||q.length<2)return "";
   return `<div class="more"><button type="button" id="mbgo">Search MusicBrainz for songs titled “${esc(cap(q))}”</button>
+  <a class="gbtn" href="https://www.google.com/search?q=${encodeURIComponent('songs with the name "'+cap(q)+'" in the lyrics')}" target="_blank" rel="noopener">Search Google for songs that mention “${esc(cap(q))}” ↗</a>
   <span id="mbmsg">Finds lesser-known songs and B-sides with this name anywhere in the title. Takes a few seconds.</span></div>`;
 }
 function render(){
