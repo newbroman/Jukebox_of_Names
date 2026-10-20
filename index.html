@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Jukebox of Names</title>
+<meta name="theme-color" content="#c8203a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Name Songs">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Archivo:wght@400;600;700&family=Courier+Prime:wght@400;700&display=swap">
+<style>
+:root{
+  --bg:#e6e9ef; --panel:#f7f8fb; --ink:#1d2433; --muted:#5b6478;
+  --strip:#fffdf8; --band:#c8203a; --band2:#1f4fa3; --line:#cdd3de; --hi:#ffe066;
+  --display:"Bungee","Arial Black",sans-serif; --body:"Archivo",system-ui,sans-serif; --type:"Courier Prime","Courier New",monospace;
+  --tabh:62px;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#121725; --panel:#1b2234; --ink:#e9ecf3; --muted:#9aa3b8;
+  --strip:#232b40; --band:#e2445c; --band2:#5a8de0; --line:#2f3850; --hi:#6b5a12; color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--body);-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+.app{max-width:560px;margin:0 auto;padding-bottom:calc(var(--tabh) + env(safe-area-inset-bottom,0px) + 16px)}
+.top{position:sticky;top:0;z-index:5;background:var(--bg);
+  padding:calc(env(safe-area-inset-top,0px) + 10px) max(14px,env(safe-area-inset-right,0px)) 10px max(14px,env(safe-area-inset-left,0px));
+  border-bottom:1px solid var(--line);display:grid;gap:8px}
+h1{font:400 24px/1 var(--display);margin:0;color:var(--band)}
+h1 span{color:var(--band2)}
+#q{width:100%;font:600 16px var(--body);padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+.filters{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+select{width:100%;min-width:0;font:600 13px var(--body);padding:8px 6px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+main{padding:10px max(14px,env(safe-area-inset-right,0px)) 0 max(14px,env(safe-area-inset-left,0px));display:grid;gap:8px}
+:focus-visible{outline:3px solid var(--band2);outline-offset:2px}
+.meta{font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.meta b{color:var(--ink)}
+.nrow{display:grid;grid-template-columns:1.8em minmax(0,1fr) 72px auto;gap:8px;align-items:center;background:var(--strip);
+  border:1px solid var(--line);border-radius:6px;padding:9px 10px;text-align:left;font:inherit;color:inherit;width:100%;cursor:pointer}
+.rank{font-family:var(--type);color:var(--muted);font-variant-numeric:tabular-nums;font-size:13px}
+.nname{font-weight:700;font-size:16px;overflow-wrap:anywhere}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--band)}
+.m .bar i{background:var(--band2)} .u .bar i{background:var(--muted)}
+.cnt{font:400 13px var(--display);font-variant-numeric:tabular-nums;white-space:nowrap}
+.strip{background:var(--strip);border:1px solid var(--line);border-radius:3px;font-family:var(--type);display:grid;grid-template-columns:44px minmax(0,1fr)}
+.code{font:400 13px var(--display);color:#fff;background:var(--band2);display:grid;place-items:center}
+.code.mb{background:var(--muted)}
+.sb{padding:8px 10px;min-width:0}
+.title{font-weight:700;font-size:15px;color:var(--band);text-transform:uppercase;line-height:1.2;overflow-wrap:anywhere}
+.band{height:3px;background:var(--band);margin:6px 0 5px;opacity:.85}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.links{display:flex;gap:12px}
+.links a{color:var(--band2);font:700 12px var(--body);text-decoration:none;text-transform:uppercase;letter-spacing:.04em;padding:4px 0}
+.tag{font:700 10px var(--body);letter-spacing:.08em;text-transform:uppercase;padding:2px 5px;border-radius:4px;color:#fff;margin-left:5px;vertical-align:1px;background:var(--band)}
+.tag.m{background:var(--band2)} .tag.u,.tag.l{background:var(--muted)} .tag.mbt{background:transparent;color:var(--muted);border:1px solid var(--line)}
+mark{background:var(--hi);color:inherit}
+.more{background:var(--panel);border:1px dashed var(--line);border-radius:8px;padding:12px;display:grid;gap:8px;font-size:13px;color:var(--muted)}
+.more button{font:700 14px var(--body);padding:11px;border-radius:8px;border:0;background:var(--band2);color:#fff;cursor:pointer}
+.more button:disabled{opacity:.6}
+.empty{padding:20px 8px;text-align:center;color:var(--muted)}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--panel);border-top:1px solid var(--line);
+  display:grid;grid-template-columns:1fr 1fr 1fr;padding:0 env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+.tabs button{height:var(--tabh);border:0;background:none;color:var(--muted);font:700 12px var(--body);letter-spacing:.05em;text-transform:uppercase;cursor:pointer;display:grid;place-items:center;gap:0;align-content:center}
+.tabs button b{font:400 18px var(--display);display:block}
+.tabs button[aria-pressed="true"]{color:var(--band)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <h1>Jukebox <span>of</span> Names</h1>
+    <input id="q" type="search" placeholder="Type a name, e.g. Martin" autocomplete="off" aria-label="Search by name or song title">
+    <div class="filters">
+      <select id="gender" aria-label="Gender"><option value="all">Everyone</option><option value="f">Women</option><option value="m">Men</option></select>
+      <select id="where" aria-label="Where the name appears"><option value="all">Title or lyrics</option><option value="t">In title</option><option value="l">In lyrics</option></select>
+      <select id="decade" aria-label="Decade"><option value="all">All years</option><option value="pre">Pre-1960</option><option value="1960">1960s</option><option value="1970">1970s</option><option value="1980">1980s</option><option value="1990">1990s</option><option value="2000">2000s+</option></select>
+    </div>
+  </div>
+  <main id="main"></main>
+</div>
+<nav class="tabs" aria-label="Views">
+  <button type="button" data-v="names" aria-pressed="true"><b>#</b>Names</button>
+  <button type="button" data-v="songs" aria-pressed="false"><b>♫</b>Songs</button>
+  <button type="button" data-v="random" aria-pressed="false"><b>?</b>Random</button>
+</nav>
+<script>
+const RAW=`Mandy|Mandy|Barry Manilow|1974
+Roxanne|Roxanne|The Police|1978
+Jolene|Jolene|Dolly Parton|1973
+Layla|Layla|Derek and the Dominos|1970
+Gloria|Gloria|Them|1964
+Gloria|Gloria|Laura Branigan|1982
+Lola|Lola|The Kinks|1970
+Victoria|Victoria|The Kinks|1969
+Michelle|Michelle|The Beatles|1965
+Eleanor|Eleanor Rigby|The Beatles|1966
+Jude|Hey Jude|The Beatles|1968
+Martha|Martha My Dear|The Beatles|1968
+Julia|Julia|The Beatles|1968
+Lucy|Lucy in the Sky with Diamonds|The Beatles|1967
+Prudence|Dear Prudence|The Beatles|1968
+Caroline|Sweet Caroline|Neil Diamond|1969
+Rosie|Cracklin' Rosie|Neil Diamond|1970
+Caroline|Caroline|Status Quo|1973
+Delilah|Delilah|Tom Jones|1968
+Delilah|Hey There Delilah|Plain White T's|2006
+Angie|Angie|The Rolling Stones|1973
+Ruby|Ruby Tuesday|The Rolling Stones|1967
+Ruby|Ruby, Don't Take Your Love to Town|Kenny Rogers & The First Edition|1969
+Ruby|Ruby|Kaiser Chiefs|2007
+Ruby|Ruby Soho|Rancid|1995
+Daniel|Daniel|Elton John|1973
+Nikita|Nikita|Elton John|1985
+Rosanna|Rosanna|Toto|1982
+Billie Jean|Billie Jean|Michael Jackson|1983
+Eileen|Come On Eileen|Dexys Midnight Runners|1982
+Peggy Sue|Peggy Sue|Buddy Holly|1957
+Valerie|Valerie|The Zutons|2006
+Valerie|Valerie|Mark Ronson ft. Amy Winehouse|2007
+Stan|Stan|Eminem|2000
+Barbara Ann|Barbara Ann|The Beach Boys|1965
+Rhonda|Help Me, Rhonda|The Beach Boys|1965
+Susie|Wake Up Little Susie|The Everly Brothers|1957
+Cecilia|Cecilia|Simon & Garfunkel|1970
+Kathy|Kathy's Song|Simon & Garfunkel|1965
+Rikki|Rikki Don't Lose That Number|Steely Dan|1974
+Peg|Peg|Steely Dan|1977
+Josie|Josie|Steely Dan|1977
+Jessie|Jessie's Girl|Rick Springfield|1981
+Jenny|867-5309/Jenny|Tommy Tutone|1981
+Joe|Hey Joe|The Jimi Hendrix Experience|1966
+Johnny|Johnny B. Goode|Chuck Berry|1958
+Maggie|Maggie May|Rod Stewart|1971
+Emma|Emma|Hot Chocolate|1974
+Clair|Clair|Gilbert O'Sullivan|1972
+Alison|Alison|Elvis Costello|1977
+Veronica|Veronica|Elvis Costello|1989
+Ziggy|Ziggy Stardust|David Bowie|1972
+Rosalita|Rosalita (Come Out Tonight)|Bruce Springsteen|1973
+Bernadette|Bernadette|Four Tops|1967
+Diana|Diana|Paul Anka|1957
+Carol|Oh! Carol|Neil Sedaka|1959
+Iris|Iris|Goo Goo Dolls|1998
+Stacy|Stacy's Mom|Fountains of Wayne|2003
+Sara|Sara|Fleetwood Mac|1979
+Rhiannon|Rhiannon|Fleetwood Mac|1976
+Sara|Sara Smile|Hall & Oates|1975
+Jane|Sweet Jane|The Velvet Underground|1970
+Jane|Jane Says|Jane's Addiction|1988
+Brandy|Brandy (You're a Fine Girl)|Looking Glass|1972
+Sylvia|Sylvia's Mother|Dr. Hook & the Medicine Show|1972
+Ben|Ben|Michael Jackson|1972
+Billy|Billy, Don't Be a Hero|Paper Lace|1974
+Vincent|Vincent|Don McLean|1971
+Annie|Annie's Song|John Denver|1974
+Mary|Proud Mary|Creedence Clearwater Revival|1969
+Mary|Along Comes Mary|The Association|1966
+Mary Jane|Mary Jane's Last Dance|Tom Petty and the Heartbreakers|1993
+Mary Lou|Hello Mary Lou|Ricky Nelson|1961
+Fernando|Fernando|ABBA|1976
+Kayleigh|Kayleigh|Marillion|1985
+Sue|Runaround Sue|Dion|1961
+Sherry|Sherry|The Four Seasons|1962
+Donna|Donna|Ritchie Valens|1958
+Lily|Lily the Pink|The Scaffold|1968
+Arnold|Arnold Layne|Pink Floyd|1967
+Emily|See Emily Play|Pink Floyd|1967
+Amanda|Amanda|Boston|1986
+Jeremy|Jeremy|Pearl Jam|1991
+Denis|Denis|Blondie|1978
+Maria|Maria|Blondie|1999
+Suzanne|Suzanne|Leonard Cohen|1967
+Marianne|So Long, Marianne|Leonard Cohen|1967
+Johanna|Visions of Johanna|Bob Dylan|1966
+James|Sweet Baby James|James Taylor|1970
+Elenore|Elenore|The Turtles|1968
+Jack|Jack & Diane|John Mellencamp|1982
+Christine|Christine|Siouxsie and the Banshees|1980
+Charlotte|Charlotte Sometimes|The Cure|1981
+Mona Lisa|Mona Lisa|Nat King Cole|1950
+Michael|Michael|Franz Ferdinand|2004
+Michael|Michael, Row the Boat Ashore|The Highwaymen|1961
+Alejandro|Alejandro|Lady Gaga|2010
+Joanne|Joanne|Lady Gaga|2016
+Bette|Bette Davis Eyes|Kim Carnes|1981
+Mickey|Mickey|Toni Basil|1982
+Jennifer|Jennifer Juniper|Donovan|1968
+Sally|Mustang Sally|Wilson Pickett|1966
+Sally|Long Tall Sally|Little Richard|1956
+Molly|Good Golly, Miss Molly|Little Richard|1958
+Lucille|Lucille|Little Richard|1957
+Lucille|Lucille|Kenny Rogers|1977
+Alice|Living Next Door to Alice|Smokie|1976
+Bobby|Me and Bobby McGee|Janis Joplin|1971
+Billie Joe|Ode to Billie Joe|Bobbie Gentry|1967
+Carrie|Carrie|Europe|1987
+Laura|Laura|Scissor Sisters|2004
+Ophelia|Ophelia|The Lumineers|2016
+Polly|Polly|Nirvana|1991
+Eli|Eli's Coming|Three Dog Night|1969
+Martin|Abraham, Martin and John|Dion|1968
+Marlene|Marlene on the Wall|Suzanne Vega|1985
+Luka|Luka|Suzanne Vega|1987
+Daisy|Daisy Bell (Bicycle Built for Two)|Harry Dacre|1892
+Melissa|Melissa|The Allman Brothers Band|1972
+Jessica|Jessica|The Allman Brothers Band|1973
+Joe|Joe le taxi|Vanessa Paradis|1987
+Amie|Amie|Pure Prairie League|1972
+Sally|Don't Look Back in Anger|Oasis|1996|L
+Mary|Thunder Road|Bruce Springsteen|1975|L
+Wendy|Born to Run|Bruce Springsteen|1975|L
+Annie|Smooth Criminal|Michael Jackson|1988|L
+Tommy|Livin' on a Prayer|Bon Jovi|1986|L
+Gina|Livin' on a Prayer|Bon Jovi|1986|L
+Brenda|Scenes from an Italian Restaurant|Billy Joel|1977|L
+Eddie|Scenes from an Italian Restaurant|Billy Joel|1977|L
+Virginia|Only the Good Die Young|Billy Joel|1977|L
+Mary|Let It Be|The Beatles|1970|L
+Jojo|Get Back|The Beatles|1969|L
+Loretta|Get Back|The Beatles|1969|L
+Desmond|Ob-La-Di, Ob-La-Da|The Beatles|1968|L
+Molly|Ob-La-Di, Ob-La-Da|The Beatles|1968|L
+Billy|Sgt. Pepper's Lonely Hearts Club Band|The Beatles|1967|L
+Holly|Walk on the Wild Side|Lou Reed|1972|L
+Candy|Walk on the Wild Side|Lou Reed|1972|L
+Jackie|Walk on the Wild Side|Lou Reed|1972|L
+Joe|Walk on the Wild Side|Lou Reed|1972|L
+Tom|Space Oddity|David Bowie|1969|L
+Juliet|Love Story|Taylor Swift|2008|L
+Romeo|Love Story|Taylor Swift|2008|L
+Becky|Baby Got Back|Sir Mix-a-Lot|1992|L
+Martin|Martin|Soft Cell|1983`;
+const MALE=new Set("Jude Daniel Joe Johnny Ziggy Ben Billy Vincent Fernando Arnold Jeremy Denis James Jack Michael Alejandro Mickey Bobby Billie Joe Eli Martin Luka Stan Jessie Tommy Eddie Jojo Desmond Tom Romeo".split(" ").concat(["Billie Joe"]));
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1).toLowerCase();
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+const SONGS=RAW.trim().split("\n").map(l=>{const [name,title,artist,year,w]=l.split("|");return{name,title,artist,year:+year,w:w==="L"?"l":"t",g:MALE.has(name)?"m":"f"}});
+const known=new Map(SONGS.map(s=>[s.name.toLowerCase(),s.g]));
+// songs found earlier on MusicBrainz are kept on this phone
+store.get("mbSongs",[]).forEach(s=>SONGS.push(s));
+SONGS.sort((a,b)=>a.name.localeCompare(b.name)||a.year-b.year);
+function codes(){const t={};SONGS.forEach(s=>{if(s.mb){s.code="MB";return}const L=s.name[0].toUpperCase();t[L]=(t[L]||0)+1;s.code=L+t[L]})}
+codes();
+
+let view="names",pick=null;
+const hl=(text,q)=>{if(!q)return esc(text);const i=text.toLowerCase().indexOf(q);return i<0?esc(text):esc(text.slice(0,i))+"<mark>"+esc(text.slice(i,i+q.length))+"</mark>"+esc(text.slice(i+q.length))};
+const gTag=g=>`<span class="tag ${g}">${g==="f"?"F":g==="m"?"M":"?"}</span>`;
+function inDecade(y,d){if(d==="all")return true;if(!y)return false;if(d==="pre")return y<1960;d=+d;if(d===2000)return y>=2000;return y>=d&&y<d+10}
+function filtered(){
+  const q=$("q").value.trim().toLowerCase(),g=$("gender").value,w=$("where").value,d=$("decade").value;
+  return SONGS.filter(s=>inDecade(s.year,d)&&(g==="all"||s.g===g)&&(w==="all"||s.w===w)&&(!q||(s.name+" "+s.title).toLowerCase().includes(q)));
+}
+function strip(s,q){const term=encodeURIComponent(s.title+" "+s.artist);return `<article class="strip">
+  <div class="code${s.mb?" mb":""}">${s.code}</div>
+  <div class="sb"><div class="title">${hl(s.title,q)}</div><div class="band"></div>
+  <div class="foot"><span>${s.year||"?"} · ${hl(s.name,q)}${gTag(s.g)}${s.w==="l"?'<span class="tag l">Lyrics</span>':""}${s.mb?'<span class="tag mbt">MusicBrainz</span>':""}</span>
+  <span class="links"><a href="https://genius.com/search?q=${term}" target="_blank" rel="noopener">Lyrics</a><a href="https://www.youtube.com/results?search_query=${term}" target="_blank" rel="noopener">Listen</a></span></div></div></article>`}
+
+function moreBox(q){
+  if(!q||q.length<2)return "";
+  return `<div class="more"><button type="button" id="mbgo">Search MusicBrainz for songs titled “${esc(cap(q))}”</button>
+  <span id="mbmsg">Finds lesser-known songs and B-sides with this name in the title. Needs a connection.</span></div>`;
+}
+function render(){
+  const q=$("q").value.trim().toLowerCase(), list=pick?[pick]:filtered(); let h="";
+  if(view==="names"&&!pick){
+    const by={};list.forEach(s=>{(by[s.name]=by[s.name]||{name:s.name,g:s.g,n:0}).n++});
+    const rows=Object.values(by).sort((a,b)=>b.n-a.n||a.name.localeCompare(b.name)),max=rows[0]?rows[0].n:1;
+    const f=rows.filter(r=>r.g==="f").length,m=rows.filter(r=>r.g==="m").length;
+    h+=`<div class="meta"><span><b>${rows.length}</b> names · <b>${f}</b> women · <b>${m}</b> men</span><span>Tap a name</span></div>`;
+    let rank=0,prev=null;
+    h+=rows.map((r,i)=>{if(r.n!==prev){rank=i+1;prev=r.n}return `<button type="button" class="nrow ${r.g}" data-n="${esc(r.name)}">
+      <span class="rank">${rank}</span><span class="nname">${hl(r.name,q)}${gTag(r.g)}</span><span class="bar"><i style="width:${r.n/max*100}%"></i></span><span class="cnt">${r.n}</span></button>`}).join("");
+  }else{
+    h+=`<div class="meta"><span><b>${list.length}</b> ${list.length===1?"song":"songs"}</span>${pick?'<span>Tap Random again for another</span>':""}</div>`;
+    h+=list.map(s=>strip(s,q)).join("");
+  }
+  if(!list.length)h+=`<p class="empty">Nothing in the jukebox for “${esc($("q").value)}” yet.</p>`;
+  if(!pick)h+=moreBox(q);
+  $("main").innerHTML=h;
+  $("main").querySelectorAll(".nrow").forEach(b=>b.onclick=()=>{$("q").value=b.dataset.n;setView("songs");window.scrollTo(0,0)});
+  const go=$("mbgo"); if(go)go.onclick=()=>searchMB(cap($("q").value.trim()));
+}
+function setView(v){view=v;document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));render()}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
+  if(b.dataset.v==="random"){const l=filtered().length?filtered():SONGS;pick=l[Math.floor(Math.random()*l.length)];setView("random");return}
+  pick=null;setView(b.dataset.v)});
+["q","gender","where","decade"].forEach(id=>$(id).addEventListener("input",()=>{pick=null;if(view==="random")view="songs";setView(view)}));
+
+async function searchMB(name){
+  const btn=$("mbgo"),msg=$("mbmsg");btn.disabled=true;msg.textContent="Searching MusicBrainz…";
+  try{
+    const url="https://musicbrainz.org/ws/2/recording?fmt=json&limit=100&query="+encodeURIComponent(`recording:"${name}" AND status:official`);
+    const r=await fetch(url,{headers:{Accept:"application/json"}});
+    if(!r.ok)throw new Error(r.status===503?"busy":"http");
+    const data=await r.json(), re=new RegExp("(^|[^a-z])"+name.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"('s)?([^a-z]|$)","i");
+    const seen=new Set(SONGS.map(s=>(s.title+"|"+s.artist).toLowerCase())), g=known.get(name.toLowerCase())||"u", found=[];
+    for(const rec of data.recordings||[]){
+      const title=(rec.title||"").trim(); if(!re.test(title))continue;
+      if(/\b(remix|live|demo|version|edit|mix|karaoke|instrumental|acoustic)\b/i.test(rec.disambiguation||""))continue;
+      const artist=(rec["artist-credit"]||[]).map(a=>a.name+(a.joinphrase||"")).join("").trim(); if(!artist)continue;
+      const key=(title+"|"+artist).toLowerCase(); if(seen.has(key))continue; seen.add(key);
+      const year=+((rec["first-release-date"]||"").slice(0,4))||0;
+      found.push({name,title,artist,year,w:"t",g,mb:true});
+    }
+    found.forEach(s=>SONGS.push(s));
+    store.set("mbSongs",SONGS.filter(s=>s.mb));
+    SONGS.sort((a,b)=>a.name.localeCompare(b.name)||a.year-b.year);codes();
+    setView("songs");
+    const m=$("mbmsg"); if(m)m.textContent=found.length?`Added ${found.length} songs from MusicBrainz, kept on this phone.`:"MusicBrainz had nothing new for this name.";
+  }catch(e){
+    btn.disabled=false;msg.textContent=e.message==="busy"?"MusicBrainz is busy. Wait a few seconds and try again.":"Couldn't reach MusicBrainz. Check your connection and try again.";
+  }
+}
+render();
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
