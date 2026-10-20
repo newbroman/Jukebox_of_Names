@@ -296,12 +296,13 @@ function strip(s,q){const term=encodeURIComponent(s.title+" "+s.artist);return `
   <div class="code${s.mb?" mb":""}">${s.code}</div>
   <div class="sb"><div class="title">${hl(s.title,q)}</div><div class="band"></div>
   <div class="foot"><span>${s.year||"?"} · ${hl(s.name,q)}${gTag(s.g)}${s.w==="l"?'<span class="tag l">Lyrics</span>':""}${s.mb?'<span class="tag mbt">MusicBrainz</span>':""}</span>
-  <span class="links"><a href="https://www.google.com/search?q=${term}%20lyrics" target="_blank" rel="noopener">Lyrics</a><a href="https://www.youtube.com/results?search_query=${term}" target="_blank" rel="noopener">Listen</a></span></div></div></article>`}
+  <span class="links"><a href="https://www.google.com/search?q=${term}%20site%3Alyrics.com" target="_blank" rel="noopener">Lyrics</a><a href="https://www.youtube.com/results?search_query=${term}" target="_blank" rel="noopener">Listen</a></span></div></div></article>`}
 
 function moreBox(q){
   if(!q||q.length<2)return "";
   return `<div class="more"><button type="button" id="mbgo">Search MusicBrainz for songs titled “${esc(cap(q))}”</button>
-  <a class="gbtn" href="https://www.google.com/search?q=${encodeURIComponent('songs with the name "'+cap(q)+'" in the lyrics')}" target="_blank" rel="noopener">Search Google for songs that mention “${esc(cap(q))}” ↗</a>
+  <a class="gbtn" href="https://www.lyrics.com/lyrics/${encodeURIComponent(cap(q))}" target="_blank" rel="noopener">Songs that mention “${esc(cap(q))}” on Lyrics.com ↗</a>
+  <a class="gbtn" href="https://www.google.com/search?q=${encodeURIComponent('songs with the name "'+cap(q)+'" in the lyrics')}" target="_blank" rel="noopener">Search Google instead ↗</a>
   <span id="mbmsg">Finds lesser-known songs and B-sides with this name anywhere in the title. Takes a few seconds.</span></div>`;
 }
 function render(){
